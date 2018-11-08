@@ -3,11 +3,11 @@
 import re
 import logging
 
-import strings
-import decoding_manager
-from utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
-from function_argument_getter import get_function_contexts
-from decoding_manager import DecodedString, LocationType
+from . import strings
+from . import decoding_manager
+from .utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
+from .function_argument_getter import get_function_contexts
+from .decoding_manager import DecodedString, LocationType
 
 
 floss_logger = logging.getLogger("floss")
@@ -175,7 +175,7 @@ def extract_delta_bytes(delta, decoded_at_va, source_fva=0x0):
 
     # iterate memory from after the decoding, since if somethings been allocated,
     # we want to know. don't care if things have been deallocated.
-    for section_after_start, section_after in mem_after.items():
+    for section_after_start, section_after in list(mem_after.items()):
         (_, _, (_, after_len, _, _), bytes_after) = section_after
         if section_after_start not in mem_before:
             characteristics = {"location_type": LocationType.HEAP}

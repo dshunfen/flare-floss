@@ -79,7 +79,7 @@ class ApiMonitor(viv_utils.emulator_drivers.Monitor):
         pointer_size = emu.getPointerSize()
         STACK_SEARCH_WINDOW = pointer_size * NUM_ADDRESSES
         esp = emu.getStackCounter()
-        for offset in xrange(0, STACK_SEARCH_WINDOW, pointer_size):
+        for offset in range(0, STACK_SEARCH_WINDOW, pointer_size):
             ret_va_candidate = self.getStackValue(emu, offset)
             if ret_va_candidate in return_addresses:
                 emu.setProgramCounter(ret_va_candidate)
@@ -98,7 +98,7 @@ class ApiMonitor(viv_utils.emulator_drivers.Monitor):
         '''
         esp = emu.getStackCounter()
         stack_str = ""
-        for i in xrange(16, -16, -4):
+        for i in range(16, -16, -4):
             if i == 0:
                 sp = "<= SP"
             else:

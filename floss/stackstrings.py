@@ -9,8 +9,8 @@ import envi.archs.i386
 import envi.archs.amd64
 import viv_utils.emulator_drivers
 
-import strings
-from utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
+from . import strings
+from .utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
 
 
 logger = logging.getLogger(__name__)

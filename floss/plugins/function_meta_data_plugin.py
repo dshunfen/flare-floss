@@ -1,6 +1,6 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-import plugin_object
+from . import plugin_object
 import floss.interfaces as interfaces
 
 
@@ -70,7 +70,7 @@ class FunctionArgumentCountPlugin(plugin_object.GeneralPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, arg_len in function_vas.items():
+        for fva, arg_len in list(function_vas.items()):
             if arg_len > 0 and arg_len < 4:
                 score = 1.0
             elif arg_len >= 4 and arg_len < 7:
@@ -102,7 +102,7 @@ class FunctionMetaDataPlugin(plugin_object.GeneralPlugin):
         candidate_functions = {}
         for fva in function_vas:
             meta_data = vivisect_workspace.getFunctionMetaDict(fva)
-            if meta_data_key in meta_data.keys():
+            if meta_data_key in list(meta_data.keys()):
                 self.d("Function at 0x%08X has meta data:\n"
                        " %s: %s" % (fva, meta_data_key, meta_data[meta_data_key]))
                 candidate_functions[fva] = meta_data[meta_data_key]
@@ -124,7 +124,7 @@ class FunctionIsThunkPlugin(FunctionMetaDataPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, is_thunk in function_vas.items():
+        for fva, is_thunk in list(function_vas.items()):
             if is_thunk:
                 candidate_functions[fva] = 1.0
             else:
@@ -147,7 +147,7 @@ class FunctionBlockCountPlugin(FunctionMetaDataPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, meta_data_value in function_vas.items():
+        for fva, meta_data_value in list(function_vas.items()):
             score = 0.0 * meta_data_value  # TODO scoring
             candidate_functions[fva] = score
         return candidate_functions
@@ -168,7 +168,7 @@ class FunctionInstructionCountPlugin(FunctionMetaDataPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, meta_data_value in function_vas.items():
+        for fva, meta_data_value in list(function_vas.items()):
             score = 0.0 * meta_data_value  # TODO scoring
             candidate_functions[fva] = score
         return candidate_functions
@@ -189,7 +189,7 @@ class FunctionSizePlugin(FunctionMetaDataPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, meta_data_value in function_vas.items():
+        for fva, meta_data_value in list(function_vas.items()):
             score = 0.0 * meta_data_value  # TODO scoring
             candidate_functions[fva] = score
         return candidate_functions
@@ -210,7 +210,7 @@ class FunctionRecursivePlugin(FunctionMetaDataPlugin):
 
     def score(self, function_vas, vivisect_workspace=None):
         candidate_functions = {}
-        for fva, meta_data_value in function_vas.items():
+        for fva, meta_data_value in list(function_vas.items()):
             score = 0.0 * meta_data_value  # TODO scoring
             candidate_functions[fva] = score
         return candidate_functions

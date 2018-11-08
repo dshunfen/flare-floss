@@ -2,7 +2,7 @@
 # encoding: utf-8
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import print_function
+
 import os
 import sys
 import mmap
@@ -15,20 +15,20 @@ from optparse import OptionParser, OptionGroup
 import tabulate
 import viv_utils
 
-import version
-import strings
-import stackstrings
-import string_decoder
-import plugins.arithmetic_plugin
-import identification_manager as im
-import plugins.library_function_plugin
-import plugins.function_meta_data_plugin
-import plugins.mov_plugin
-from interfaces import DecodingRoutineIdentifier
-from decoding_manager import LocationType
+from . import version
+from . import strings
+from . import stackstrings
+from . import string_decoder
+from .plugins import arithmetic_plugin
+from . import identification_manager as im
+from .plugins import library_function_plugin
+from .plugins import function_meta_data_plugin
+from .plugins import mov_plugin
+from .interfaces import DecodingRoutineIdentifier
+from .decoding_manager import LocationType
 from base64 import b64encode
 
-from utils import get_vivisect_meta_info
+from .utils import get_vivisect_meta_info
 
 
 floss_logger = logging.getLogger("floss")
@@ -113,17 +113,17 @@ def get_all_plugins():
     """
     ps = DecodingRoutineIdentifier.implementors()
     if len(ps) == 0:
-        ps.append(plugins.function_meta_data_plugin.FunctionCrossReferencesToPlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionArgumentCountPlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionIsThunkPlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionBlockCountPlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionInstructionCountPlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionSizePlugin())
-        ps.append(plugins.function_meta_data_plugin.FunctionRecursivePlugin())
-        ps.append(plugins.library_function_plugin.FunctionIsLibraryPlugin())
-        ps.append(plugins.arithmetic_plugin.XORPlugin())
-        ps.append(plugins.arithmetic_plugin.ShiftPlugin())
-        ps.append(plugins.mov_plugin.MovPlugin())
+        ps.append(function_meta_data_plugin.FunctionCrossReferencesToPlugin())
+        ps.append(function_meta_data_plugin.FunctionArgumentCountPlugin())
+        ps.append(function_meta_data_plugin.FunctionIsThunkPlugin())
+        ps.append(function_meta_data_plugin.FunctionBlockCountPlugin())
+        ps.append(function_meta_data_plugin.FunctionInstructionCountPlugin())
+        ps.append(function_meta_data_plugin.FunctionSizePlugin())
+        ps.append(function_meta_data_plugin.FunctionRecursivePlugin())
+        ps.append(library_function_plugin.FunctionIsLibraryPlugin())
+        ps.append(arithmetic_plugin.XORPlugin())
+        ps.append(arithmetic_plugin.ShiftPlugin())
+        ps.append(mov_plugin.MovPlugin())
     return ps
 
 
@@ -490,9 +490,9 @@ def print_decoding_results(decoded_strings, group_functions, quiet=False, expert
         print("\nFLOSS decoded %d strings" % len(decoded_strings))
 
     if group_functions:
-        fvas = set(map(lambda i: i.fva, decoded_strings))
+        fvas = set([i.fva for i in decoded_strings])
         for fva in fvas:
-            grouped_strings = filter(lambda ds: ds.fva == fva, decoded_strings)
+            grouped_strings = [ds for ds in decoded_strings if ds.fva == fva]
             len_ds = len(grouped_strings)
             if len_ds > 0:
                 if not quiet:
@@ -557,7 +557,7 @@ def create_x64dbg_database_content(sample_file_path, imagebase, decoded_strings)
                 except:
                     processed[rva] = "FLOSS: " + sanitized_string
 
-    for i in processed.keys():
+    for i in list(processed.keys()):
         comment = {
             "text": processed[i],
             "manual": False,
@@ -765,7 +765,7 @@ def print_static_strings(path, min_length, quiet=False):
             if not quiet:
                 print("")
 
-            if os.path.getsize(path) > sys.maxint:
+            if os.path.getsize(path) > sys.maxsize:
                 floss_logger.warning("File too large, strings listings may be truncated.")
                 floss_logger.warning("FLOSS cannot handle files larger than 4GB on 32bit systems.")
 
@@ -810,9 +810,9 @@ def print_stack_strings(extracted_strings, quiet=False, expert=False):
 def print_file_meta_info(vw, selected_functions):
     print("\nVivisect workspace analysis information")
     try:
-        for k, v in get_vivisect_meta_info(vw, selected_functions).iteritems():
+        for k, v in get_vivisect_meta_info(vw, selected_functions).items():
             print("%s: %s" % (k, v or "N/A"))  # display N/A if value is None
-    except Exception, e:
+    except Exception as e:
         floss_logger.error("Failed to print vivisect analysis information: {0}".format(e.message))
 
 
@@ -858,10 +858,10 @@ def load_vw(sample_file_path, save_workspace, verbose, is_shellcode, shellcode_e
             return load_workspace(sample_file_path, save_workspace)
         else:
             return load_shellcode_workspace(sample_file_path, save_workspace, shellcode_entry_point, shellcode_base)
-    except LoadNotSupportedError, e:
+    except LoadNotSupportedError as e:
         floss_logger.error(str(e))
         raise WorkspaceLoadError
-    except Exception, e:
+    except Exception as e:
         floss_logger.error("Vivisect failed to load the input file: {0}".format(e.message), exc_info=verbose)
         raise WorkspaceLoadError
 
@@ -924,7 +924,7 @@ def main(argv=None):
 
     selected_plugin_names = select_plugins(options.plugins)
     floss_logger.debug("Selected the following plugins: %s", ", ".join(map(str, selected_plugin_names)))
-    selected_plugins = filter(lambda p: str(p) in selected_plugin_names, get_all_plugins())
+    selected_plugins = [p for p in get_all_plugins() if str(p) in selected_plugin_names]
 
     if options.should_show_metainfo:
         meta_functions = None
@@ -960,7 +960,7 @@ def main(argv=None):
         stack_strings = []
 
     if options.x64dbg_database_file:
-        imagebase = vw.filemeta.values()[0]['imagebase']
+        imagebase = list(vw.filemeta.values())[0]['imagebase']
         floss_logger.info("Creating x64dbg database...")
         create_x64dbg_database(sample_file_path, options.x64dbg_database_file, imagebase, decoded_strings)
 

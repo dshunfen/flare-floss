@@ -1,10 +1,9 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import envi
 import viv_utils
 
-from . import plugin_object
+import plugin_object
 import floss.interfaces as interfaces
 
 

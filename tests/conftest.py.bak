@@ -1,6 +1,5 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import os
 import yaml
 import pytest
@@ -27,7 +26,7 @@ def extract_strings(vw):
 def identify_decoding_functions(vw):
     selected_functions = floss_main.select_functions(vw, None)
     selected_plugin_names = floss_main.select_plugins(None)
-    selected_plugins = [p for p in floss_main.get_all_plugins() if str(p) in selected_plugin_names]
+    selected_plugins = filter(lambda p: str(p) in selected_plugin_names, floss_main.get_all_plugins())
     decoding_functions_candidates = im.identify_decoding_functions(vw, selected_plugins, selected_functions)
     return decoding_functions_candidates
 
@@ -117,7 +116,7 @@ class FLOSSTest(pytest.Item):
             return
 
         vw = viv_utils.getWorkspace(test_path)
-        fs = [p[0] for p in identify_decoding_functions(vw).get_top_candidate_functions()]
+        fs = map(lambda p: p[0], identify_decoding_functions(vw).get_top_candidate_functions())
         found_functions = set(fs)
 
         if not (expected_functions <= found_functions):

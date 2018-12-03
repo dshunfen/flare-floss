@@ -1,7 +1,6 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
-from . import plugin_object
+import plugin_object
 import floss.interfaces as interfaces
 
 
@@ -103,7 +102,7 @@ class FunctionMetaDataPlugin(plugin_object.GeneralPlugin):
         candidate_functions = {}
         for fva in function_vas:
             meta_data = vivisect_workspace.getFunctionMetaDict(fva)
-            if meta_data_key in list(meta_data.keys()):
+            if meta_data_key in meta_data.keys():
                 self.d("Function at 0x%08X has meta data:\n"
                        " %s: %s" % (fva, meta_data_key, meta_data[meta_data_key]))
                 candidate_functions[fva] = meta_data[meta_data_key]

@@ -1,6 +1,5 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import logging
 
 from collections import namedtuple
@@ -10,8 +9,8 @@ import envi.archs.i386
 import envi.archs.amd64
 import viv_utils.emulator_drivers
 
-from . import strings
-from .utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
+import strings
+from utils import makeEmulator, is_fp_string, strip_string, MAX_STRING_LENGTH
 
 
 logger = logging.getLogger(__name__)

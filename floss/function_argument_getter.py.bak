@@ -1,6 +1,5 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import contextlib
 from collections import namedtuple
 
@@ -8,8 +7,8 @@ import envi
 import viv_utils
 import viv_utils.emulator_drivers
 
-from . import api_hooks
-from .utils import makeEmulator
+import api_hooks
+from utils import makeEmulator
 
 # TODO get return address from emu_snap
 FunctionContext = namedtuple("FunctionContext", ["emu_snap", "return_address", "decoded_at_va"])

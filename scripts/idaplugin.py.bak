@@ -6,7 +6,6 @@ currently loaded module in IDA Pro.
 author: Willi Ballenthin
 email: willi.ballenthin@gmail.com
 '''
-from __future__ import absolute_import
 import time
 import logging
 

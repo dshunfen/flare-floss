@@ -1,11 +1,8 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import re
 import tabulate
 from collections import OrderedDict
-from six.moves import map
-from six.moves import range
 
 ONE_MB = 1024 * 1024
 STACK_MEM_NAME = "[stack]"
@@ -29,7 +26,7 @@ def removeStackMemory(emu):
     # TODO this is a hack while vivisect's initStackMemory() has a bug (see issue #27)
     # TODO does this bug still exist?
     memory_snap = emu.getMemorySnap()
-    for i in range((len(memory_snap) - 1), -1, -1):
+    for i in xrange((len(memory_snap) - 1), -1, -1):
         (_, _, info, _) = memory_snap[i]
         if info[3] == STACK_MEM_NAME:
             del memory_snap[i]

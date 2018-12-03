@@ -1,6 +1,5 @@
 # Copyright (C) 2017 FireEye, Inc. All Rights Reserved.
 
-from __future__ import absolute_import
 import plugnplay
 import viv_utils
 
